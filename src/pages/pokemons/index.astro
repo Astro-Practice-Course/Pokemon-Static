@@ -1,0 +1,26 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import type { Pokemons } from "../../interfaces/pokemons.interface";
+import PokemonCard from "../../components/pokemons/PokemonCard.astro";
+
+const pokemonsUrl = "https://pokeapi.co/api/v2/pokemon?limit=151";
+
+const response = await fetch(pokemonsUrl);
+
+const pokemons = (await response.json()) as Pokemons;
+---
+
+<Layout title="Pokemons">
+  <main class="flex h-full flex-col items-center p-12">
+    <h1 class="self-start text-3xl font-bold">First Generation of Pokémon</h1>
+    <section class="grid grid-cols-4 gap-4">
+      {
+        pokemons.results.map(({ name, url }) => {
+          const id = url.split("/").filter(Boolean).pop() || "";
+
+          return <PokemonCard name={name} id={id} />;
+        })
+      }
+    </section>
+  </main>
+</Layout>
