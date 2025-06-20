@@ -1,0 +1,62 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import type { Pokemons } from "../../interfaces/pokemons.interface";
+
+export const getStaticPaths = (async () => {
+  const pokemonsUrl = "https://pokeapi.co/api/v2/pokemon?limit=151";
+
+  const response = await fetch(pokemonsUrl);
+  const { results } = (await response.json()) as Pokemons;
+
+  return results.map(({ name, url }) => {
+    const id = url.split("/").filter(Boolean).pop() || "";
+
+    return {
+      params: { name },
+      props: { name, id },
+    };
+  });
+}) satisfies GetStaticPaths;
+
+interface Props {
+  name: string;
+  id: string;
+}
+
+const { name, id } = Astro.props as Props;
+
+const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+const shinnyImageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/shiny/${id}.png`;
+const cryUrl = `https://raw.githubusercontent.com/PokeAPI/cries/main/cries/pokemon/latest/${id}.ogg`;
+---
+
+<Layout title={name}>
+  <main class="flex h-full flex-col items-center gap-y-12 p-12">
+    <button
+      onclick="history.back()"
+      class="self-start underline hover:text-slate-300"
+    >
+      Volver
+    </button>
+    <section class="mb-12 flex flex-col items-center">
+      <h1 class="mb-4 text-4xl font-bold capitalize">{name}</h1>
+      <p class="mb-12 text-2xl text-slate-300">#{id}</p>
+      <div class="group relative h-96 w-96 overflow-hidden">
+        <img
+          id="poke-image"
+          src={imageUrl}
+          alt={name}
+          class="h-full w-full object-contain transition-all"
+          onmouseover={`this.src='${shinnyImageUrl}'`}
+          onmouseout={`this.src='${imageUrl}'`}
+          transition:name={`${name}-${id}`}
+        />
+        <img src={shinnyImageUrl} alt="" class="hidden" aria-hidden="true" />
+      </div>
+    </section>
+    <audio class="w-md" controls src={cryUrl}>
+      Your browser does not support the audio element.
+    </audio>
+  </main>
+</Layout>

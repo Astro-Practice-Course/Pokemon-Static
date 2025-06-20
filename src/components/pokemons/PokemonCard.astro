@@ -10,10 +10,11 @@ const imageUrl = `https://raw.githubusercontent.com/PokeAPI/sprites/master/sprit
 ---
 
 <a
-  class="flex aspect-square flex-col items-center justify-evenly gap-y-4 rounded-2xl bg-slate-700 p-4"
-  href={`/pokemons/${name}`}
+  class="flex aspect-square flex-col items-center justify-evenly gap-y-4 rounded-2xl bg-slate-700 p-4 transition-all hover:scale-105 hover:bg-slate-600 hover:contrast-125"
+  href={`/pokemon/${name}`}
 >
   <img
+    transition:name={`${name}-${id}`}
     class="h-48 w-48 place-content-center items-center justify-center object-contain"
     src={imageUrl}
     alt={name}
