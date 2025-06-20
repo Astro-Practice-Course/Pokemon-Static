@@ -1,0 +1,55 @@
+---
+import { Icon } from "astro-icon/components";
+import type { Page } from "astro";
+import type { Pokemon } from "../../interfaces/pokemons.interface";
+
+interface Props {
+  page: Page<Pokemon>;
+}
+
+const { page } = Astro.props;
+---
+
+<nav class="flex items-center gap-x-4">
+  <!-- Primera página -->
+  <button
+    type="button"
+    disabled={!page.url.prev}
+    onclick={`location.href='${page.url.first ?? "#"}'`}
+    class="cursor-pointer hover:opacity-80 disabled:cursor-default disabled:opacity-50"
+  >
+    <Icon name="double-chevron-left-icon" />
+  </button>
+
+  <!-- Página anterior -->
+  <button
+    type="button"
+    disabled={!page.url.prev}
+    onclick={`location.href='${page.url.prev ?? "#"}'`}
+    class="cursor-pointer hover:opacity-80 disabled:cursor-default disabled:opacity-50"
+  >
+    <Icon name="chevron-left-icon" />
+  </button>
+
+  <p>Página {page.currentPage}</p>
+
+  <!-- Página siguiente -->
+  <button
+    type="button"
+    disabled={!page.url.next}
+    onclick={`location.href='${page.url.next ?? "#"}'`}
+    class="cursor-pointer hover:opacity-80 disabled:cursor-default disabled:opacity-50"
+  >
+    <Icon name="chevron-right-icon" />
+  </button>
+
+  <!-- Última página -->
+  <button
+    type="button"
+    disabled={!page.url.next}
+    onclick={`location.href='${page.url.last ?? "#"}'`}
+    class="cursor-pointer hover:opacity-80 disabled:cursor-default disabled:opacity-50"
+  >
+    <Icon name="double-chevron-right-icon" />
+  </button>
+</nav>

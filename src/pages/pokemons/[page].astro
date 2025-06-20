@@ -1,0 +1,42 @@
+---
+import type { GetStaticPaths } from "astro";
+import Layout from "../../layouts/Layout.astro";
+import type { Pokemons } from "../../interfaces/pokemons.interface";
+import PokemonCard from "../../components/pokemons/PokemonCard.astro";
+import Paginator from "../../components/paginator/Paginator.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const pokemonsUrl = "https://pokeapi.co/api/v2/pokemon?limit=151";
+
+  const response = await fetch(pokemonsUrl);
+  const { results } = (await response.json()) as Pokemons;
+
+  return paginate(results, { pageSize: 12 });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const title = "Pokemons";
+const description = "First Generation of Pokémon";
+const image =
+  "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/25.png";
+---
+
+<Layout title={title} description={description} image={image}>
+  <main class="flex h-full flex-col items-center gap-y-4 p-12">
+    <header class="flex w-full justify-between">
+      <h1 class="self-start text-3xl font-bold">First Generation of Pokémon</h1>
+      <Paginator page={page} />
+    </header>
+    <section class="mb-2 grid grid-cols-2 gap-4 md:grid-cols-4">
+      {
+        page.data.map(({ name, url }) => {
+          const id = url.split("/").filter(Boolean).pop() || "";
+
+          return <PokemonCard name={name} id={id} />;
+        })
+      }
+    </section>
+    <Paginator page={page} />
+  </main>
+</Layout>
